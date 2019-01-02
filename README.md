@@ -11,9 +11,6 @@ Inspired by Nestjs, Angular and ASP.net</p>
 ```npm
 npm i --save neots
 ```
-```yarn
-yarn add neots
-```
 
 ## About
 Neo is a typescript framework which is javascript compatible made for a large scale project but which is very usefull for small ones with the architecture we provide.
