@@ -1,0 +1,6 @@
+src
+tsconfig.json
+docs
+travis.yml
+LICENSE
+tslint.json

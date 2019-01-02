@@ -1,0 +1,79 @@
+{
+   "name": "neots",
+   "version": "1.0.8",
+   "description": "Scalable, agile and organized Node.js/Typescript framework",
+   "main": "dist/index.js",
+   "types": "dist/index.d.ts",
+   "keywords": [
+      "typescript",
+      "express-framework",
+      "socketio-framework",
+      "mvc",
+      "typescript-framework",
+      "javascript",
+      "es7-framework"
+   ],
+   "engines": {
+      "node": ">= 8.9.0"
+   },
+   "repository": {
+      "type": "git",
+      "url": "https://github.com/underfisk/neo"
+   },
+   "scripts": {
+      "lint": "tslint -p tsconfig.json -c tslint.json \"src/**/*.ts\" -e \"*.spec.ts\"",
+      "start": "npm run lint && tsc -w && DEBUG=app:* nodemon ./dist",
+      "dev": "tsc-watch --onSuccess \"nodemon ./dist\" --onFailure \"echo Compiled Failed\"",
+      "build": "tsc",
+      "deploy": "npm run build && npm version patch && npm publish"
+   },
+   "author": "Enigma",
+   "license": "MIT",
+   "dependencies": {
+      "body-parser": "^1.18.3",
+      "compression": "^1.7.3",
+      "cors": "^2.8.5",
+      "email-validator": "^2.0.4",
+      "express": "^4.16.4",
+      "express-mysql-session": "^2.1.0",
+      "express-session": "^1.15.6",
+      "express-useragent": "^1.0.12",
+      "express-validator": "^5.3.1",
+      "helmet": "^3.15.0",
+      "mysql": "^2.14.1",
+      "nodemailer": "^4.7.0",
+      "reflect-metadata": "^0.1.10",
+      "socket.io": "^2.2.0",
+      "typeorm": "^0.2.9"
+   },
+   "devDependencies": {
+      "@babel/core": "^7.2.2",
+      "@babel/preset-env": "^7.2.3",
+      "@babel/preset-typescript": "^7.1.0",
+      "@types/body-parser": "^1.17.0",
+      "@types/compression": "0.0.36",
+      "@types/cookie-parser": "^1.4.1",
+      "@types/cors": "^2.8.4",
+      "@types/debug": "0.0.31",
+      "@types/errorhandler": "0.0.32",
+      "@types/express": "^4.16.0",
+      "@types/express-mysql-session": "^1.2.2",
+      "@types/express-session": "^1.15.11",
+      "@types/express-useragent": "^0.2.21",
+      "@types/helmet": "0.0.42",
+      "@types/mysql": "^2.15.5",
+      "@types/node": "^8.10.39",
+      "@types/nodemailer": "^4.6.5",
+      "@types/socket.io": "^2.1.2",
+      "@types/stack-trace": "0.0.29",
+      "babel-loader": "^8.0.4",
+      "chalk": "^2.4.1",
+      "cookie-parser": "^1.4.3",
+      "debug": "^4.1.1",
+      "errorhandler": "^1.5.0",
+      "nodemon": "^1.18.9",
+      "ts-node": "3.3.0",
+      "tslint": "^5.12.0",
+      "typescript": "^2.9.2"
+   }
+}

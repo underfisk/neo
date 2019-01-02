@@ -1,0 +1,12 @@
+{
+    "rulesDirectory": [],
+    "default_severity": "error",
+    "rules": {
+        "new-parens": true,
+        "no-arg": true,
+        "no-bitwise": false,
+        "no-unbound-method": false,
+        "no-conditional-assignment": false,
+        "no-consecutive-blank-lines": false
+    }
+}
