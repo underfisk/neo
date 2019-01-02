@@ -10,7 +10,7 @@ export class Logger
     /**
      * Private instance of debug
      */
-    private static readonly logInstance = debug('app:logger')
+    private static readonly logInstance = debug('neots:log')
     
     /**
      * Logs a given message

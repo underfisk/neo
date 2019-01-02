@@ -2,7 +2,7 @@ import * as debug from 'debug'
 import { Constructable } from '../../common/collections';
 import { INeoModel } from '../interfaces/neo-model';
 import { Package, TransformedPackage } from '../interfaces/package';
-const log: any = debug('app:package-repository')
+const log: any = debug('neots:repository')
 
 /**
  * Returns a repository of a loaded package

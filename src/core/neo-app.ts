@@ -82,8 +82,8 @@ export class NeoApplication
      * Debuggers instances
      * @todo Replace with a custom logger
      */
-    private readonly log = debug('app:neo')
-    private readonly http_log = debug('app:http')
+    private readonly log = debug('neots:app')
+    private readonly http_log = debug('neots:http')
 
     /**
      * Initializes a new instance which 

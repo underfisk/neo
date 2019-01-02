@@ -26,7 +26,7 @@ import { Package, TransformedPackage } from '../interfaces/package';
 /**
  * Private instance of packate factory debug
  */
-const log = debug('app:package-factory')
+const log = debug('neots:package-factory')
 
 
 /**
