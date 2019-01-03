@@ -6,6 +6,7 @@ Inspired by Nestjs, Angular and ASP.net</p>
 
 [![Build Status](https://api.travis-ci.org/underfisk/neo.svg?branch=master)](https://travis-ci.org/underfisk/neo)
 [![Build Status](https://img.shields.io/travis/underfisk/neo/master.svg?label=linux)](https://travis-ci.org/underfisk/neo)
+[![Build Status](https://img.shields.io/badge/status-development-lightgrey.svg)](https://github.com/underfisk/neo)
 
 ## Installation
 ```npm
