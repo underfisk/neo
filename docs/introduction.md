@@ -97,7 +97,7 @@ client requests in specific HTTP Methods.
 As you've seen routing is the way of declaring the URL(s) and available methods for client request.
 Controllers are a section of handlers that will resolve new requests and respond to them.
 
-[Controllers API](controlles.md)
+[Controllers API](controllers.md)
 
 
 ## Event Listeners
