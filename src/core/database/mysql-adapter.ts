@@ -1,11 +1,18 @@
-import { PoolConfig, PoolConnection, createPool, Pool, MysqlError} from 'mysql'
+import { 
+    PoolConfig, 
+    PoolConnection, 
+    createPool, 
+    Pool, 
+    MysqlError
+} from 'mysql'
 import { Adapter } from './adapter';
 import { Logger } from '../../common/logger';
+import { isUndefined } from 'util';
 
 /**
  * Mysql driver adapter using mysql module for database
  * 
- * @author Rodrigo Rodrigues
+ * @author Enigma
  * @package Neo
  */
 export class MysqlAdapter extends Adapter
@@ -110,25 +117,36 @@ export class MysqlAdapter extends Adapter
     }
 
     /**
-     * Performs an execution of a SP Query
+     * Performs a Stored procedura query but offers potential things such as
+     * no required to set CALL nor the escape
      * 
-     * @param sql 
+     * @param stored_procedure_name 
      * @param args 
-     * 
-     * @return Promise
      */
-    public async spQuery(sql: string, args?: any[]) : Promise<any> {
-        const DEFAULT_PACKET = 0
+    public async spQuery(stored_procedure_name: string, args: any[]) : Promise<any> {
+        let sql = `CALL ${stored_procedure_name}(${this.bindMark(args.length)})`
         return new Promise( (resolve, reject) => {
-            this.pool.getConnection( (err, con) => {
-                if (err) reject(err)
-    
-                con.query( sql, args, (err, rows) => {
-                    con.release()
-                    if (err) reject(err)
-                    resolve( rows[DEFAULT_PACKET] )
-                })
+            this.query(sql, args).then( rows => {
+                resolve( !isUndefined(rows) ? rows[0] : undefined)
+            }).catch( err => {
+                reject(err)
             })
         })
     }
+
+    /**
+     * Returns a string with the size of marks needed for SP
+     * @param size 
+     */
+    private bindMark(size: number) : string {
+        let str: string = ""
+        for(let i = 0; i < size; i++)
+        {
+            if (i === size - 1) //last
+                str += '?'
+            else
+                str += '?,'
+        }
+        return str
+    } 
 }

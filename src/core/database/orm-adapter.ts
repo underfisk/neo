@@ -8,7 +8,7 @@ import { Logger } from '../../common';
  * Creates a new TypeORM Adapter
  * 
  * @package Neo
- * @author Rodrigo Rodrigues
+ * @author Enigma
  */
 export class ORMAdapter extends Adapter
 {

@@ -14,7 +14,7 @@ import * as cookieParser from 'cookie-parser';
  * what to setup or load
  * 
  * @package Neo.ts
- * @author Rodrigo Rodrigues
+ * @author Enigma
  */
 export interface NeoAppConfig {
     /**

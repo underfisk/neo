@@ -22,13 +22,15 @@ import { isUndefined } from 'util';
 import * as useragent from 'express-useragent';
 import { NeoAppConfig } from './interfaces/app-config';
 import { Package } from './interfaces/package';
+
 /**
  * Neo-Application is designed to be a single instance running
  * express and socket.io under it
  * Check the documentation for more information
  * 
  * @package Neo.ts
- * @author Rodrigo Rodrigues
+ * @link https://github.com/underfisk/neo
+ * @author Enigma
  */
 export class NeoApplication
 {
@@ -77,22 +79,15 @@ export class NeoApplication
      */
     private sessionMiddleware: any
 
-
-    /**
-     * Debuggers instances
-     * @todo Replace with a custom logger
-     */
+    //Debuggers instances
     private readonly log = debug('neots:app')
     private readonly http_log = debug('neots:http')
 
     /**
      * Initializes a new instance which 
-     * configures initial settings
-     * @todo Refactor ifs to methods and make httpserver/io server outside with more functionalities
+     * configures the initial application settings
      * 
      * @param config 
-     * 
-     * @return void
      */
     public constructor (default_package: Package, private readonly config: NeoAppConfig){       
         //Say we are botting

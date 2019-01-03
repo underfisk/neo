@@ -6,7 +6,7 @@ import { isUndefined } from 'util';
  * @todo Make that part of be global
  * 
  * @package Neo
- * @author Rodrigo Rodrigues
+ * @author Enigma
  */
 export class PackageRepository
 {

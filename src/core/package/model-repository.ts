@@ -5,7 +5,7 @@ import { INeoModel } from "../interfaces/neo-model";
  * through contollers/listeners constructors
  * 
  * @package Neo
- * @author Rodrigo Rodrigues
+ * @author Enigma
  */
 export class ModelRepository
 {

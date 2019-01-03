@@ -2,7 +2,7 @@
  * MetadaScanner is a reflection utility to gather information of node modules/function parsed
  * given to be loaded
  * 
- * @author Rodrigo Rodrigues
+ * @author Enigma
  * @package Neo
  */
 export class MetadataScanner

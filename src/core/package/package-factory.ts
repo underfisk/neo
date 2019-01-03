@@ -32,7 +32,7 @@ const log = debug('neots:package-factory')
 /**
  * Package Factory is designed to process, analyze and load packages and it's content
  * 
- * @author Rodrigo Rodrigues
+ * @author Enigma
  * @package Neo
  */
 export class PackageFactory

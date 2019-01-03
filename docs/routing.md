@@ -33,6 +33,17 @@ class HelloWorld {
         //your code here
         ...
     }
+
+    /**
+     * Declaring an route
+     * url = yourweb.com/auth
+     * where / is the controller prefix
+     */
+    @Post('auth')
+    public authHandler(req: Express.Request, res: Express.Response) : any {
+        //your code
+        ...
+    }
 }
 ```
 
