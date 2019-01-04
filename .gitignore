@@ -3,4 +3,5 @@
 node_modules/
 temp/
 dist/
+tests/
 .DS_STORE

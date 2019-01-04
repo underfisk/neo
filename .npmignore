@@ -1,6 +1,7 @@
-src
+src/
 tsconfig.json
-docs
+docs/
+tests/
 travis.yml
 LICENSE
 tslint.json
