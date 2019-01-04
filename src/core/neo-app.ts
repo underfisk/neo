@@ -239,6 +239,10 @@ export class NeoApplication
                 this.loadDefaultPackage(default_package)
             })
         }
+        else
+        {
+            this.loadDefaultPackage(default_package) //without database
+        }
     }
 
     /**
