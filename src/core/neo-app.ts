@@ -380,11 +380,14 @@ export class NeoApplication
      * @param options SessionOptions
      */
     private useSession(options?: SessionOptions) : this {
-        //Express-session middleware
-        this.sessionMiddleware = session(options)
-        this.addMiddleware(this.sessionMiddleware)
+        if (options !== undefined)
+        {
+            //Express-session middleware
+            this.sessionMiddleware = session(options)
+            this.addMiddleware(this.sessionMiddleware)
 
-        this.log("Session has been created and shared with socket.io")
+            this.log("Session has been created and shared with socket.io")
+        }
         return this
     }
 
