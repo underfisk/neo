@@ -120,12 +120,12 @@ export class PackageFactory
      * Loads all the routes for express
      * @param pkg 
      */
-    private loadRoutes(route: IRouteMetadata, middleware: Function, controller: any, functionName: string) : void 
+    private loadRoutes(route: IRouteMetadata, middlewares: Function, controller: any, functionName: string) : void 
     {
-        if (middleware !== undefined)
+        if (middlewares !== undefined)
         {
             route.methods.map( method => {
-                this.router[method](route.path, middleware, (req,res) => controller[functionName](req,res))
+                this.router[method](route.path, middlewares, (req,res) => controller[functionName](req,res))
             })
         }
         else
@@ -186,7 +186,7 @@ export class PackageFactory
             {   
                 //Loop through the reflector object
                 reflectionMethods.map( reflector => {
-                    let middleware: Function = Reflect.getMetadata(HTTP_MIDDLEWARE, reflector.method),
+                    let middlewares: Function = Reflect.getMetadata(HTTP_MIDDLEWARE, reflector.method),
                         routeData: IRouteMetadata = reflector.descriptor
                     
                     //Guarantee we have valid paths
@@ -198,7 +198,7 @@ export class PackageFactory
                     //Proceed the format of the route
                     reflector.descriptor.path = this.routeFormatter(controllerPrefix, reflector.descriptor.path)
                         
-                    this.loadRoutes(routeData, middleware, ctrInstance, reflector.method.name)
+                    this.loadRoutes(routeData, middlewares, ctrInstance, reflector.method.name)
                 })
             }
         })

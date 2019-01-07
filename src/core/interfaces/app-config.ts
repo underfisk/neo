@@ -103,7 +103,7 @@ export interface NeoAppConfig {
      * @memberof AppConfig
      */
     cookieParserOptions?: {
-        secret: string,
+        secret?: string,
         options?: cookieParser.CookieParseOptions
     }
 

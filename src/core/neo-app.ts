@@ -342,17 +342,22 @@ export class NeoApplication
      * Use this carefully since TOPFramework is written in top
      * of this instance
      * 
-     * @return Express.Application
      */
     public get httpServer () : Express.Application {
         return this.expressApp
     }
 
     /**
+     * Returns express router instance
+     */
+    public get httpRouter () : Express.Router {
+        return this.httpRouter
+    }
+
+    /**
      * Returns the socket.io instance in order
      * to bind events
      * 
-     * @return SocketIO.Server
      */
     public get io () : SocketIO.Server | undefined{
         return this.eventIO
