@@ -351,7 +351,7 @@ export class NeoApplication
      * Returns express router instance
      */
     public get httpRouter () : Express.Router {
-        return this.httpRouter
+        return this.expressRouter
     }
 
     /**
