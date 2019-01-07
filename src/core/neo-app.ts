@@ -143,10 +143,12 @@ export class NeoApplication
         //Configures socket.io with our server to be shared 
         this.eventIO = io.listen(this.server, this.config.socketOptions) 
 
-        //Make sure we have instance
-        this.addIOMiddleware( (socket: SocketIO.Socket, next: Express.NextFunction) => {
-            this.sessionMiddleware(socket.request, socket.request.res || {}, next)
-        })
+        //Make sure we have session middleware
+        if (!isUndefined(this.sessionMiddleware)){
+            this.addIOMiddleware( (socket: SocketIO.Socket, next: Express.NextFunction) => {
+                this.sessionMiddleware(socket.request, socket.request.res || {}, next)
+            })
+        }
 
         //Initialize priority call before prepare routes
         this.loadStaticDirectories()
