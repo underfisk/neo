@@ -9,7 +9,7 @@ import {
 import { Adapter } from './adapter';
 import { Logger } from '../../common/logger';
 import { isUndefined } from 'util';
-import { IMysqlObjectLiteral } from './interfaces/mysql.interface';
+import { IMysqlObjectLiteral } from './relational-keyvalue'
 
 /**
  * Mysql driver adapter using mysql module for database
