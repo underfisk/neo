@@ -1,1 +1,1 @@
-export * from './mysql.interface'
+export {IMysqlObjectLiteral} from './mysql.interface'
