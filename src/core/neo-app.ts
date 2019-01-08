@@ -67,7 +67,7 @@ export class NeoApplication
     /**
      * Database adapter for models di
      */
-    private dbAdapter?: Adapter
+    private dbAdapter?: MysqlAdapter | ORMAdapter
 
     /**
      * Email service to general use not locked to instance
@@ -361,10 +361,16 @@ export class NeoApplication
      * to bind events
      * 
      */
-    public get io () : SocketIO.Server | undefined{
+    public get io () : SocketIO.Server | undefined { 
         return this.eventIO
     }
 
+    /**
+     * Returns the database adapter in case is provided info
+     */
+    public get database () : MysqlAdapter | ORMAdapter | undefined {
+        return this.dbAdapter
+    }
 
     /**
      * Enables Email service using NodeMailer

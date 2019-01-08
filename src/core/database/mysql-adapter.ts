@@ -3,11 +3,13 @@ import {
     PoolConnection, 
     createPool, 
     Pool, 
-    MysqlError
+    MysqlError,
+    escape
 } from 'mysql'
 import { Adapter } from './adapter';
 import { Logger } from '../../common/logger';
 import { isUndefined } from 'util';
+import { IMysqlObjectLiteral } from './interfaces/mysql.interface';
 
 /**
  * Mysql driver adapter using mysql module for database
@@ -100,15 +102,14 @@ export class MysqlAdapter extends Adapter
      */
     public async query (sql: string, args?: any[]) : Promise<any> {
         return new Promise( (resolve, reject) => {
-            this.pool.getConnection( (err, con) => {
-                if (err) 
-                {
+            this.pool.getConnection( (err, conn) => {
+                if (err) {
                     this.filterConnectionError(err)
                     reject(err)
                 }
-    
-                con.query( sql, args, (err, rows) => {
-                    con.release()
+                
+                conn.query( sql, args, (err, rows) => {
+                    conn.release()
                     if (err) reject(err)
                     resolve(rows)
                 })
@@ -117,7 +118,23 @@ export class MysqlAdapter extends Adapter
     }
 
     /**
-     * Performs a Stored procedura query but offers potential things such as
+     * Returns a transformed set string for sql update query (values come
+     * escaped using mysql.escape function)
+     * @param data 
+     */
+    public transformSet(data: IMysqlObjectLiteral[]) : any {
+        let transformed = ''
+
+        data.map( (obj: IMysqlObjectLiteral, index) => {
+            transformed += (`${obj.column} = ${escape(obj.value)}`)
+            if (index !== data.length - 1 )
+                transformed += (',')
+        })
+        return transformed
+    }
+    
+    /**
+     * Performs a Stored procedure query but offers potential things such as
      * no required to set CALL nor the escape
      * 
      * @param stored_procedure_name 
