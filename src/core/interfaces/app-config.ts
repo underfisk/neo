@@ -7,6 +7,7 @@ import { ConnectionOptions } from 'typeorm';
 import { CorsOptions } from 'cors';
 import * as helmet from 'helmet';
 import { IExpressMiddleware } from '../../common/decorators/http-middleware';
+import { IoMiddleware } from '../neo-app';
 
 /**
  * Application configuration is the boot configuration seed
@@ -68,6 +69,8 @@ export interface NeoAppConfig {
      * They will be injected before express.router
      */
     middlewares?: IExpressMiddleware[],
+    ioMiddlewares?: IoMiddleware[],
+    databaseORM?: any
     /**
      * Define whether you want to use a database ORM
      * which in case is TypeORM

@@ -21,6 +21,14 @@ import { NeoAppConfig } from './interfaces/app-config';
 import { Package } from './interfaces/package';
 
 /**
+ * Temporary here
+ * Used to create boot socketio middelware loading
+ */
+export interface IoMiddleware {
+    (socket: SocketIO.Socket, next: any) : void
+}
+
+/**
  * Neo-Application is designed to be a single instance running
  * express and socket.io under it
  * Check the documentation for more information
@@ -29,8 +37,7 @@ import { Package } from './interfaces/package';
  * @link https://github.com/underfisk/neo
  * @author Enigma
  */
-export class NeoApplication
-{
+export class NeoApplication {
     /**
      * Express.Application instance
      */
@@ -134,13 +141,17 @@ export class NeoApplication
         //Configures socket.io with our server to be shared 
         this.eventIO = io.listen(this.server, this.config.socketOptions) 
 
-        //Make sure we have session middleware
+        //Make sure we have session middleware in case session is on
         if (!isUndefined(this.sessionMiddleware)){
             this.addIOMiddleware( (socket: SocketIO.Socket, next: Express.NextFunction) => {
                 this.sessionMiddleware(socket.request, socket.request.res || {}, next)
             })
         }
 
+        //Load the middlewares of io
+        if (!isUndefined(this.config.ioMiddlewares) && this.config.ioMiddlewares.length > 0) {
+            this.addIOMiddlewareList(this.config.ioMiddlewares)
+        }
         //Initialize priority call before prepare routes
         this.loadStaticDirectories()
 
@@ -274,7 +285,7 @@ export class NeoApplication
      * Adds a new middleware to low-level io
      * @param middleware 
      */
-    public addIOMiddleware( fn: ( socket: SocketIO.Socket, fn: ( err?: any ) => void ) => void ) : this {
+    public addIOMiddleware( fn: IoMiddleware ) : this {
         this.eventIO.use(fn)
         return this
     }
@@ -303,6 +314,20 @@ export class NeoApplication
                 this.expressApp.use( fn )
             })
     }
+
+    /**
+     * Adds a list of middlewares to socketio
+     *
+     * @param {Express.Handler[]} middlewares
+     * @memberof Application
+     */
+    public addIOMiddlewareList( middlewares: IoMiddleware[] ) : void {
+        if (middlewares.length > 0)
+            middlewares.map( (fn) => {
+                this.eventIO.use( fn )
+            })
+    }
+
     /**
      * Adds a new setting for express
      *
