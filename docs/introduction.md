@@ -55,7 +55,7 @@ Neo CLI command:
 neocli create project-name
 ```
 Without CLI:
-Create a folder, initialize your npm and add neo as a depedencie 
+Create a folder, initialize your npm and add neo as a dependency
 
 Default folder structure using NeoCLI:
 ```bash
@@ -88,6 +88,8 @@ When we create a new `NeoApplication` we need to provide a default package but a
 This is may be considered an auto-loader for the application which means
 models, controllers and listeners must be seeded here instead of runtime loading.
 
+[NeoAppConfig More](neoappconfig.md)
+
 ## Routing
 This technique allow's developers to define the URL(s) paths to handle
 client requests in specific HTTP Methods.
@@ -118,10 +120,10 @@ This is very useful when you wanna validate some body field or for security reas
 
 Example of a controller for get parameter in default prefix:
 ```typescript
-@Middleware( (req,res,next) => {
+@Middleware([(req,res,next) => {
     console.log('Hi')
     next()
-})
+}])
 @Get('hello')
 public async onHello(req,res) : Promise<any> {
     res.json({message: 'hello'})

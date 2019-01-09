@@ -18,7 +18,7 @@ Neo is a typescript framework which is javascript compatible made for a large sc
 Here we do not enforce a specific way of doing the "things", you can simply build your own folder or code structure while we provide interfaces for MVC/MV*.
 Using Neo packages, javascript code can be more organized with our multiple patterns implemented. 
 Express and Socket.io are underneath being our core modules but also we use other modules to provide more features.
-
+**Warning** Since Neo is a continuous development framework you might be subject of structure changes so stay attention
 
 ## Why should i use Neo over Angular or Nest?
 Well we are not here to substitue Nest or Angular, therefore we are here to provide another framework with it's own utility and purpose.
