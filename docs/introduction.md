@@ -88,6 +88,8 @@ When we create a new `NeoApplication` we need to provide a default package but a
 This is may be considered an auto-loader for the application which means
 models, controllers and listeners must be seeded here instead of runtime loading.
 
+[NeoAppConfig More](neoappconfig.md)
+
 ## Routing
 This technique allow's developers to define the URL(s) paths to handle
 client requests in specific HTTP Methods.
