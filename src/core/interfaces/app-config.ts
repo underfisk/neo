@@ -7,6 +7,7 @@ import { ConnectionOptions } from 'typeorm';
 import { CorsOptions } from 'cors';
 import * as helmet from 'helmet';
 import * as cookieParser from 'cookie-parser';
+import { IExpressMiddleware } from '../../common/decorators/http-middleware';
 
 /**
  * Application configuration is the boot configuration seed
@@ -65,8 +66,9 @@ export interface NeoAppConfig {
     /**
      * Express middlewares list in case you want
      * to autoload
+     * They will be injected before express.router
      */
-    middlewares?: Handler[],
+    middlewares?: IExpressMiddleware[],
     /**
      * Define whether you want to use a database ORM
      * which in case is TypeORM
@@ -103,7 +105,7 @@ export interface NeoAppConfig {
      * @memberof AppConfig
      */
     cookieParserOptions?: {
-        secret?: string,
+        secret?: string | string[],
         options?: cookieParser.CookieParseOptions
     }
 

@@ -113,15 +113,19 @@ export class NeoApplication
                 this.addMiddleware(helmet(this.config.helmetOptions))
         }
         
-        //Use cookie parser?
-        if (!isUndefined(this.config.cookieParserOptions))
-            this.addMiddleware(cookieParser(this.config.cookieParserOptions.secret,this.config.cookieParserOptions.options))
+        //Load express middlewares in case we have
+        if (!isUndefined(this.config.middlewares) && this.config.middlewares.length > 0)
+            this.addMiddlewareList(this.config.middlewares)
 
         //Load body parser middlewares before router
         this.addMiddlewareList( [
             bodyParser.json(),
             bodyParser.urlencoded({ extended: true }),
-            useragent.express()
+            useragent.express(),
+            cookieParser(
+                this.config.cookieParserOptions.secret, 
+                this.config.cookieParserOptions.options
+            )
         ])
 
         //Initialize our router
