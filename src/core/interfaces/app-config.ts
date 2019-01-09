@@ -98,15 +98,6 @@ export interface NeoAppConfig {
      * @type {helmet.IHelmetConfiguration}
      * @memberof AppConfig
      */
-    helmetOptions?: boolean| helmet.IHelmetConfiguration,
-    /**
-     * Enables cookie parsing from requests
-     *
-     * @memberof AppConfig
-     */
-    cookieParserOptions?: {
-        secret?: string | string[],
-        options?: cookieParser.CookieParseOptions
-    }
+    helmetOptions?: boolean| helmet.IHelmetConfiguration
 
 }
