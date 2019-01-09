@@ -55,7 +55,7 @@ Neo CLI command:
 neocli create project-name
 ```
 Without CLI:
-Create a folder, initialize your npm and add neo as a depedencie 
+Create a folder, initialize your npm and add neo as a dependency
 
 Default folder structure using NeoCLI:
 ```bash
@@ -118,10 +118,10 @@ This is very useful when you wanna validate some body field or for security reas
 
 Example of a controller for get parameter in default prefix:
 ```typescript
-@Middleware( (req,res,next) => {
+@Middleware([(req,res,next) => {
     console.log('Hi')
     next()
-})
+}])
 @Get('hello')
 public async onHello(req,res) : Promise<any> {
     res.json({message: 'hello'})
