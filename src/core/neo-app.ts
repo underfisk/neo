@@ -275,7 +275,7 @@ export class NeoApplication
      * @param middleware 
      */
     public addIOMiddleware( fn: ( socket: SocketIO.Socket, fn: ( err?: any ) => void ) => void ) : this {
-        this.io.use(fn)
+        this.eventIO.use(fn)
         return this
     }
 
