@@ -6,7 +6,6 @@ import { IValuePair } from '../../common/collections/valuepair';
 import { ConnectionOptions } from 'typeorm';
 import { CorsOptions } from 'cors';
 import * as helmet from 'helmet';
-import * as cookieParser from 'cookie-parser';
 import { IExpressMiddleware } from '../../common/decorators/http-middleware';
 
 /**

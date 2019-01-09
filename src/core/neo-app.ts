@@ -17,7 +17,6 @@ import EmailService from '../services/email';
 import { IValuePair } from '../common/collections/valuepair';
 import { ORMAdapter } from './database/orm-adapter';
 import { isUndefined } from 'util';
-import * as useragent from 'express-useragent';
 import { NeoAppConfig } from './interfaces/app-config';
 import { Package } from './interfaces/package';
 
