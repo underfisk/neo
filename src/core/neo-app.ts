@@ -4,8 +4,6 @@ import * as https from 'https'
 import * as io from 'socket.io';
 import * as debug from 'debug'
 import * as errorhandler from 'errorhandler'
-import * as bodyParser from 'body-parser'
-import * as cookieParser from 'cookie-parser'
 import * as session from 'express-session'
 import { PackageFactory } from './package/package-factory';
 import { SessionOptions } from 'express-session';
@@ -117,16 +115,6 @@ export class NeoApplication
         if (!isUndefined(this.config.middlewares) && this.config.middlewares.length > 0)
             this.addMiddlewareList(this.config.middlewares)
 
-        //Load body parser middlewares before router
-        this.addMiddlewareList( [
-            bodyParser.json(),
-            bodyParser.urlencoded({ extended: true }),
-            useragent.express(),
-            cookieParser(
-                this.config.cookieParserOptions.secret, 
-                this.config.cookieParserOptions.options
-            )
-        ])
 
         //Initialize our router
         this.expressRouter = Express.Router()
