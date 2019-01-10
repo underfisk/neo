@@ -67,6 +67,7 @@ export class MysqlAdapter extends Adapter
      */
     public onError(err: string) : void {
         Logger.log(err)
+        process.exit(3)
     }
     
     /**
@@ -90,6 +91,8 @@ export class MysqlAdapter extends Adapter
             Logger.error('Database connection was refused.')
         else
             Logger.error(err.message)
+
+        process.exit(3)
     }
 
     /**
