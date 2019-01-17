@@ -6,10 +6,10 @@ import { INeoModel } from '../interfaces/neo-model';
  * TransformedPackage is used to hold loaded resources and not any type
  * references
  * 
+ * @todo Will be deleted, new structured data will came
  * @package Neo.package
  */
-export interface TransformedPackage
-{
+export interface TransformedPackage {
     readonly name: string,
     controllers?: Constructable<any>[], //for now soon IHttpController
     configs?: JSON[],
@@ -24,10 +24,10 @@ export interface TransformedPackage
  * bundle of providers/services, here a package is a workspace
  * where you can import/export multiple modules
  * 
+ * @todo Will be modified to a decorator class and also add new properties
  * @package Neo
  */
-export interface Package
-{
+export interface Package {
     readonly name: string,
     controllers?: Constructable<any>[],
     configs?: JSON[],

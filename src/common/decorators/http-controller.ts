@@ -20,8 +20,7 @@ export function Controller (data?: IControllerData) : ClassDecorator {
  * Configuration data for controller decorator
  *
  */
-export interface IControllerData 
-{
+export interface IControllerData {
     /**
      * URL prefix
      * 

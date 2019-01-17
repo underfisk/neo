@@ -20,32 +20,42 @@ import { IoMiddleware } from '../neo-app';
 export interface NeoAppConfig {
     /**
      * Application name
+     * @default neo-application
      */
     name?: string,
     /**
      * Allow HTTPS server creation?
      * If you set this to true, please send sslOptions
+     * @deprecated By sending sslOptions this will not be necessary
      */
     https?: boolean,
     /**
      * If you want mysql just give a pool config
      * and it will try to open a pool
+     * @deprecated Will be removed
      */
     mysqlConfig?: PoolConfig,
     /**
-     * By writing something, this will enable
-     * session
+     * Express session configuration
+     * In order to enable session's please 
+     * provide the required options.
+     * Remmeber: Express session is shared 
+     * if you have socketio enabled
+     * @default
      */
     sessionOptions?: SessionOptions,
     /**
      * SSL Options to be loaded while creating a
-     * HTTP Server instance
+     * HTTPS Server instance
+     * @default none
      */
     sslOptions?: ServerOptions,
     /**
-     * Socket.io config in case you want to add
-     * extra options
-     * @default null
+     * SocketIO server configuration
+     * In order to enable socket.io server you need
+     * to provide the server options
+     * 
+     * @default none
      */
     socketOptions?: SocketIO.ServerOptions,
     /**
@@ -64,18 +74,28 @@ export interface NeoAppConfig {
      */
     viewEngine?: string,
     /**
-     * Express middlewares list in case you want
-     * to autoload
+     * Express middlewares list in case you want to do 
+     * something before router being hit
      * They will be injected before express.router
+     * @see https://expressjs.com/en/guide/using-middleware.html
      */
     middlewares?: IExpressMiddleware[],
+    /**
+     * SocketIO middleware list in case you want to do 
+     * something before events being called
+     * @see https://socket.io/docs/server-api/
+     */
     ioMiddlewares?: IoMiddleware[],
+    /**
+     * @deprecated Will be removed
+     */
     databaseORM?: any
     /**
      * Define whether you want to use a database ORM
      * which in case is TypeORM
      * @see https://github.com/typeorm/typeorm
      * @default false
+     * @deprecated Will be removed
      */
     databaseOrm?: ConnectionOptions,
     /**
@@ -88,6 +108,7 @@ export interface NeoAppConfig {
      * Provide the list of serving directories in case
      * you want to serve web resources
      * @default []
+     * @todo Will be changed 
      */
     staticFilesDirs?: IValuePair<string,string>[],
     /**
