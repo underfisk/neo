@@ -1,14 +1,11 @@
 import { Router } from 'express';
 import * as debug from 'debug'
-import { Adapter } from '../database/adapter';
 import {PackageRepository} from './package-repository';
 import { Repository } from './repository';
 import { ModelRepository } from './model-repository';
 import { isUndefined } from 'util';
-import { Logger } from '../../common/logger';
 import { MetadataScanner } from '../metadata-scanner';
-import { Constructable } from '../../common/collections/constructable';
-import { isNullOrWhiteSpace } from '../utils';
+import { Constructable } from '../../common/constructable';
 import { IControllerData } from '../../common/decorators/http-controller';
 import { 
     HTTP_MIDDLEWARE, 
@@ -17,11 +14,13 @@ import {
     IO_HANDLER, 
     IO_LISTENER, 
     IO_EVENT_MIDDLEWARE, 
-    NAMESPACE_IOMIDDLEWARE 
+    NAMESPACE_IOMIDDLEWARE, 
+    NEO_SERVICE
 } from '../../constants';
-import { IRouteMetadata } from '../interfaces/metadata/routes-metadata';
+import { IRouteMetadata } from '../interfaces/routes-metadata';
 import { NEO_MVC_MODEL } from '../../constants';
-import { Package, TransformedPackage } from '../interfaces/package';
+import { IPackage } from '../interfaces/package';
+import { IServiceData } from '../interfaces';
 
 /**
  * Private instance of packate factory debug
@@ -46,7 +45,7 @@ export class PackageFactory
      */
     constructor(private readonly router: Router, 
             private readonly io: SocketIO.Server,
-            private readonly db?: Adapter){}
+            private readonly db?: any){}
     
     /**
      * Processes a given package
@@ -56,8 +55,8 @@ export class PackageFactory
      * @return returns whether he was 
      * loaded succesfully or throw error
      */
-    public process(pkg: Package) : any {
-        log("Processing package: " + pkg.name)
+    public process(pkg: IPackage) : any {
+        log(`Processing package: ${pkg.name}`)
 
         //Name is unique so 
         if ( this.isAlreadyLoaded(pkg.name) )
@@ -71,11 +70,10 @@ export class PackageFactory
     
     /**
      * Analyzes a package and verify circular dependecy problems
-     * @todo Analyze import and export
      * 
      * @param pkg 
      */
-    private analyze(pkg: Package) : void {
+    private analyze(pkg: IPackage) : void {
 
         if (typeof pkg.models != 'undefined' && pkg.models.length > 0)
             this.loadModels(pkg.models)
@@ -89,74 +87,13 @@ export class PackageFactory
         if (typeof pkg.listeners != 'undefined' && pkg.listeners.length > 0)
             this.loadListeners(pkg.listeners, modelsRepository)
 
-        log(`Loaded ${this.repo.getLoadedControllers().length} controllers at package ${pkg.name}`)
-        log(`Loaded ${this.repo.getLoadedModels().length} models at package ${pkg.name}`)
-        log(`Loaded ${this.repo.getLoadedListeners().length} listeners at package ${pkg.name}`)
     }
-
 
     /**
      * Loads the controllers of a given package
      * @param pkg 
      */
     private loadControllers(controllers: Constructable<any>[], models: ModelRepository) : void
-    {
-        this.analyzeControllers(controllers, models)
-    }
-
-    /**
-     * Loads the models of a given package
-     *
-     * @private
-     * @param {Package} pkg
-     * @memberof PackageFactory
-     */
-    private loadModels(models: any[]) : void
-    {
-        this.analyzeModels(models)
-    }
-
-    /**
-     * Loads all the routes for express
-     * @param pkg 
-     */
-    private loadRoutes(route: IRouteMetadata, middlewares: Function, controller: any, functionName: string) : void 
-    {
-        if (middlewares !== undefined)
-        {
-            route.methods.map( method => {
-                this.router[method](route.path, middlewares, (req,res) => controller[functionName](req,res))
-            })
-        }
-        else
-        {
-            route.methods.map( method => {
-               this.router[method](route.path, (req,res) => controller[functionName](req,res))
-            })
-        }
-    }
-
-    /**
-     * Load all the listeners
-     *
-     * @private
-     * @param {Package} pkg
-     * @returns {Listener[]}
-     * @memberof PackageFactory
-     */
-    private loadListeners(listeners: Constructable<any>[], models: ModelRepository) : void 
-    {
-        this.analyzeListeners(listeners, models)
-    }
-
-    /**
-     * Analyzes the given controllers
-     * 
-     * @param controllers 
-     * 
-     * @return The list of instantiated controllers
-     */
-    private analyzeControllers(controllers: Constructable<any>[], models: ModelRepository) : void
     {
         controllers.map( (ctr : Constructable<any>) => {
             //Read the metadata of this controller
@@ -205,47 +142,23 @@ export class PackageFactory
     }
 
     /**
-     * Receives the prefix of controller and the path of the route
-     * and escapes/explore it
-     * 
-     * @param route 
+     * Loads the models of a given package
+     *
+     * @private
+     * @param {Package} pkg
+     * @memberof PackageFactory
      */
-    private routeFormatter(prefix: string, path: string ) : string {
-        let newRoute: string = ""
-
-        //Is it not default controller nor default route
-        if (path !== '/' && prefix !== '/')
-        {
-            newRoute = `/${prefix}/${path}`
-        }
-        else if (path === '/' && prefix !== '/') //Is it not default controller and default route?
-        {
-            newRoute = `/${prefix}`
-        }
-        else
-        {
-            if (path !== '/') //We dont want default route to be //
-                newRoute = `/${path}` //means its default controller and a normal route
-        }
-
-        //Clean the route from last character slash and return it
-        return newRoute[newRoute.length - 1] === '/' ? newRoute.slice(0, newRoute.length - 1) : newRoute
-    }
-    /**
-     * Validates and returns a list of models to load
-     * 
-     * @param models 
-     */
-    private analyzeModels(models: Constructable<any>[]) : void
+    private loadModels(models: any[]) : void
     {
         models.map ( (model : Constructable<any>) => {
             const metadata = Reflect.getMetadata(NEO_MVC_MODEL, model)
             //Do we have metadata
             if (metadata !== undefined)
             {
+                let ref = this.db == null ? new model() : new model(this.db)
                 //Load it to our repository
                 this.repo.loadModel({
-                    reference: new model(this.db),
+                    reference: ref,
                     options: metadata
                 })
             }
@@ -255,15 +168,31 @@ export class PackageFactory
     }
 
     /**
-     * Validates and returns a list of listeners to load
+     * Loads all the routes for express
+     * @param pkg 
+     */
+    private loadRoutes(route: IRouteMetadata, middlewares: Function, controller: any, functionName: string) : void {
+        if (middlewares !== undefined) {
+            route.methods.map( method => {
+                this.router[method](route.path, middlewares, (req,res) => controller[functionName](req,res))
+            })
+        }
+        else {
+            route.methods.map( method => {
+               this.router[method](route.path, (req,res) => controller[functionName](req,res))
+            })
+        }
+    }
+
+    /**
+     * Load all the listeners
      *
      * @private
-     * @param {Listener[]} listeners
+     * @param {Package} pkg
      * @returns {Listener[]}
      * @memberof PackageFactory
      */
-    private analyzeListeners(listeners: Constructable<any>[], models: ModelRepository) : void
-    {
+    private loadListeners(listeners: Constructable<any>[], models: ModelRepository) : void {
         listeners.map( (eventListener: Constructable<any>) => {
             //Read the metadata of this event listeners first
             const reflectionMethodsData = MetadataScanner.scan<any, string>(eventListener.prototype, IO_HANDLER),
@@ -275,8 +204,8 @@ export class PackageFactory
                 throw new Error(`${eventListener.prototype.constructor.name} is an invalid listener, missing EventListener decorator.`)
 
             //Used in order to keep a true alive reference to the instance
-            
             let created_listener = null
+
             //Now create their instances
             if (models.count() > 0)
                 created_listener = new eventListener(this.io, models)
@@ -287,24 +216,19 @@ export class PackageFactory
             this.repo.loadListener(created_listener)
 
             //Before subscribe register namespace middlewares
-            if (nsMiddleware !== undefined)
+            if (!isUndefined(nsMiddleware))
             {
-                //default
-                //not tested yet
+                //Set middleware for the provided namespace
                 if (nsMiddleware.namespace === '/')
-                {
                     this.io.use(nsMiddleware.handler)
-                }
                 else
-                {
                     this.io.of(nsMiddleware.namespace).use(nsMiddleware.handler)
-                }
             }
 
             //Do we have any subsribed event?
             if (reflectionMethodsData.length > 0)
             {
-                if ( isNullOrWhiteSpace(reflectionClassData))
+                if ( reflectionClassData == "")
                 {
                     //Bind to the connection establish event
                     this.io.on('connection', socket => {
@@ -340,6 +264,35 @@ export class PackageFactory
                 }
             }
         })
+    }
+
+
+    /**
+     * Receives the prefix of controller and the path of the route
+     * and escapes/explore it
+     * 
+     * @param route 
+     */
+    private routeFormatter(prefix: string, path: string ) : string {
+        let newRoute: string = ""
+
+        //Is it not default controller nor default route
+        if (path !== '/' && prefix !== '/')
+        {
+            newRoute = `/${prefix}/${path}`
+        }
+        else if (path === '/' && prefix !== '/') //Is it not default controller and default route?
+        {
+            newRoute = `/${prefix}`
+        }
+        else
+        {
+            if (path !== '/') //We dont want default route to be //
+                newRoute = `/${path}` //means its default controller and a normal route
+        }
+
+        //Clean the route from last character slash and return it
+        return newRoute[newRoute.length - 1] === '/' ? newRoute.slice(0, newRoute.length - 1) : newRoute
     }
 
     /**

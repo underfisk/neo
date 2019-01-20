@@ -1,5 +1,5 @@
 import { INJECTABLE_OBJECT } from '../../constants'
-
+import 'reflect-metadata'
 /**
  * Injectable decorator allows your class to receive
  * throught "Depedency Injection" the autoloaded instances

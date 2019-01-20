@@ -12,6 +12,7 @@
 * [Models injection loading and unloading](#models-injection-loading-and-unloading)
 * [Packages management](#packages-management)
 * [Services](#services)
+* [Database](#database.md)
 * [Low level API](lowlevelapi.md)
 
 
@@ -204,8 +205,10 @@ Sometimes this is very usefull to use when we want to get some model and we don'
 Neo uses a different philosophy for Services whereas in Angular/Nest they are a part of providers.
 Here we provide built-in services as MVC helpers such as Email Service, Form validation, Session state container and much more things that will offer excelent features.
 
-todo: Session state container i will create it based on redux where we save states and also use observer pattern
-
+In order to load/get a service you need to access the app singleton
+```typescript
+NeoApplication.singleton.getService<Type is optional for cast>("name")
+```
 
 
 ## PackageRepository API

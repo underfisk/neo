@@ -1,35 +1,35 @@
 import * as debug from 'debug'
-import { Constructable } from '../../common/collections';
-import { INeoModel } from '../interfaces/neo-model';
-import { Package, TransformedPackage } from '../interfaces/package';
+import { INeoModel, IServiceData } from '../interfaces/neo';
+import { IPackage } from '../interfaces/package';
+import {Constructable} from '../../common/constructable'
+import { Handler } from 'express'
+
 const log: any = debug('neots:repository')
 
 /**
  * Returns a repository of a loaded package
  * where the contained package data is returned
+ * @todo Refactor this!
  */
 export class Repository
 {
-    /**
-     * Package instance
-     */
-    private package: TransformedPackage
+    private readonly name: string 
+    private readonly controllers?: Constructable<any>[]
+    private models: INeoModel[]
+    private readonly middlewares?: Handler[]
+    private readonly listeners?: Constructable<any>[]
 
     /**
      * Receives a package default or not
      * @param pkg 
      */
-    constructor(pkg: Package){
+    constructor(pkg: IPackage){
         log('Package repository is being created..')
-        this.package= {
-            name: pkg.name,
-            configs: pkg.configs,
-            controllers: pkg.controllers,
-            listeners: pkg.listeners,
-            models: this.transformModels(pkg.models),
-            middlewares: pkg.middlewares,
-            imports: pkg.imports
-        }
+        this.name = pkg.name
+        this.controllers = pkg.controllers
+        this.listeners = pkg.listeners
+        this.models = this.transformModels(pkg.models),
+        this.middlewares = pkg.middlewares
     }
     
     /**
@@ -53,17 +53,15 @@ export class Repository
      * @todo Also check if is loaded in imported packages
      */
     public loadModel<T>(model: INeoModel) : T|undefined {
-        if (this.package.models.map( e => e.options.alias).indexOf(model.options.alias) !== -1)
-        {
+        if (this.models.map( e => e.options.alias).indexOf(model.options.alias) !== -1) {
             //we are sure that it already exists so    
-            for(const e of this.package.models)
+            for(const e of this.models)
                 if (e.options.alias === model.options.alias)
                     return e.reference as T
         }
-        else
-        {
+        else {
             //Add it cuz it wasn't added yet
-            this.package.models.push(model)
+            this.models.push(model)
             return model.reference as T
         }
     }
@@ -73,16 +71,14 @@ export class Repository
      * 
      * @param controller 
      */
-    public loadController<T>(controller: Constructable<any>) : any {
-        if (this.package.controllers.map( e => e.constructor.name).indexOf(controller.constructor.name) !== -1)
-        {
-            for(const e of this.package.controllers)
+    public loadController(controller: Constructable<any>) : any {
+        if (this.controllers.map( e => e.constructor.name).indexOf(controller.constructor.name) !== -1) {
+            for(const e of this.controllers)
                 if (e.constructor.name === controller.constructor.name)
                     return e
         }
-        else
-        {
-            this.package.controllers.push(controller)  
+        else {
+            this.controllers.push(controller)  
             return controller
         }
     }
@@ -92,59 +88,43 @@ export class Repository
      * 
      * @param listener 
      */
-    public loadListener<T>(listener: Constructable<any>) : any {
-        if (this.package.listeners.map( e => e.constructor.name).indexOf(listener.constructor.name) !== -1)
-        {
-            for(const e of this.package.listeners)
+    public loadListener(listener: Constructable<any>) : any {
+        if (this.listeners.map( e => e.constructor.name).indexOf(listener.constructor.name) !== -1){
+            for(const e of this.listeners)
                 if (e.constructor.name === listener.constructor.name)
                     return e
         }
-        else
-        {
-            this.package.listeners.push(listener)  
+        else {
+            this.listeners.push(listener)  
             return listener
         }
     }
+
 
     /**
      * Returns this package name
      */
     public getName() : string {
-        return this.package.name
+        return this.name
     }
 
     /**
      * Returns the model if is loaded otherwise returns undefined
-     * @todo Make the cast available 
      * @param name 
      */
     public getModel<T>(nameOrAlias: string) : any {
-        for(const loadedModel of this.package.models)
+        for(const loadedModel of this.models)
             if (loadedModel.options.alias === nameOrAlias) 
                 return loadedModel.reference as T
-
-        return undefined
     }
+
 
     /**
      * Returns the list of loaded models 
      */
     public getLoadedModels() : any[] {
-        return this.package.models
+        return this.models
     }
 
-    /**
-     * Returns the list of loaded controllers 
-     */
-    public getLoadedControllers() : Constructable<any>[] {
-        return this.package.controllers
-    }
-
-    /**
-     * Returns the list of loaded listeners
-     */
-    public getLoadedListeners() : Constructable<any>[] {
-        return this.package.listeners
-    }
 
 }

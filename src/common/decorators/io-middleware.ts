@@ -1,5 +1,5 @@
 import { IO_EVENT_MIDDLEWARE, NAMESPACE_IOMIDDLEWARE } from "../../constants";
-
+import 'reflect-metadata'
 /**
  * EventMiddleware is mentioned for socket.io handlers and it's called
  * before the socket event being fired and when the data packet arrives

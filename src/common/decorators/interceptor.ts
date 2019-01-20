@@ -1,5 +1,5 @@
 import { INTERCEPTABLE } from '../../constants';
-
+import 'reflect-metadata'
 
 /**
  * Interceptor is a middleware object which is allowed

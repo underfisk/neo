@@ -7,7 +7,5 @@ export * from './decorators/io-listener'
 export * from './decorators/io-middleware'
 export * from './decorators/neo-model'
 export * from './decorators/object-protection'
-//Collections here
-export * from './collections'
 //Enums here
 export * from './enums'

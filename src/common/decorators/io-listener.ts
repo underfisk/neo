@@ -1,5 +1,6 @@
 import { isUndefined } from 'util';
 import { IO_HANDLER, IO_LISTENER } from '../../constants';
+import 'reflect-metadata'
 /**
  * Defines the Event Listener for socket.io just as a namespace
  * @todo Make this receive a interface object in order to have multiple options

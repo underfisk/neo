@@ -1,4 +1,4 @@
-import { INeoModel } from "../interfaces/neo-model";
+import { INeoModel } from "../interfaces/neo";
 
 /**
  * ModelRepository is sent as dependecy injection

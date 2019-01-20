@@ -1,6 +1,4 @@
 export * from './neo-app'
 export * from './interfaces'
-export * from './utils'
 export * from './package'
-export * from './database'
 export * from './exceptions'

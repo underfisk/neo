@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { HTTP_MIDDLEWARE } from '../../constants';
-
+import 'reflect-metadata'
 /**
  * Interface made to establish express http middleware
  */

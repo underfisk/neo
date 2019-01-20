@@ -1,8 +1,8 @@
 import { HttpMethod } from "../enums";
 import { isUndefined } from 'util';
 import { HTTP_ROUTE } from '../../constants';
-import { IRouteMetadata } from '../../core/interfaces/metadata/routes-metadata';
-
+import { IRouteMetadata } from '../../core/interfaces/routes-metadata';
+import 'reflect-metadata'
 /**
  * Creates a route mapping object
  * @param path 

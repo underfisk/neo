@@ -3,8 +3,7 @@
  * 
  * @package Neo
  */
-export class RoutingError extends Error
-{
+export class RoutingError extends Error {
     constructor(public message: string){
         super(message)
         this.name = "Routing Error"

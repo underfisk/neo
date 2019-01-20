@@ -1,3 +1,4 @@
+import 'reflect-metadata'
 /**
  * MetadaScanner is a reflection utility to gather information of node modules/function parsed
  * given to be loaded

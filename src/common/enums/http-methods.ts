@@ -2,8 +2,7 @@
  * List of supported Http Methods
  * @package Neo
  */
-export enum HttpMethod
-{
+export enum HttpMethod {
     GET = 'get',
     POST = 'post',
     PUT = 'put',

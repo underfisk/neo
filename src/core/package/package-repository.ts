@@ -27,12 +27,10 @@ export class PackageRepository
         {
             let pkg = new Repository({
                 name: name,
-                configs: [],
                 controllers: [],
                 models: [],
                 listeners: [],
-                middlewares: [],
-                imports: []
+                middlewares: []
             })
             PackageRepository.loadedPackages.push(pkg)
             return pkg

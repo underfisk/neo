@@ -2,6 +2,9 @@ src/
 tsconfig.json
 docs/
 dist/tests
+src/__tests__
+src/database/__tests__
 travis.yml
 LICENSE
 tslint.json
+example/

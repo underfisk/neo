@@ -1,6 +1,6 @@
 import { isUndefined } from 'util';
 import { HTTP_CONTROLLER } from '../../constants';
-
+import 'reflect-metadata'
 /**
  * Controller is the decorator to specify that the class above is
  * going to have routes and handle http requests

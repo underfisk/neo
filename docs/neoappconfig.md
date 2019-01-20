@@ -21,9 +21,6 @@ Soon the default batteries will be splited into multiple modules in order to spe
 ## References
 #### Properties:
 * name?: string  Application name
-* https?: boolean Whether you want to create a https node server over http
-By enabling this feature you need to provide sslOptions
-* mysqlConfig?: mysql.PoolConfig Whether you want to use Mysql 
 **Note:** You can only have 1 adapter provided, soon this will change
 * sessionOptions?: express-session.SessionOptions  Whether you want to use express-session middleware just simply provide information
 * sslOptions?: https.ServerOptions Information about public/private cert
@@ -33,6 +30,5 @@ By enabling this feature you need to provide sslOptions
 * middlewares?: IExpressMiddleware[]  Express middlewares for http server(they are loaded before router and applied for the routes also)
 * databaseORM?: TypeORM.ConnectionOptions Provide TypeORM information in order to enable it. Soon we'll have more alternatives
 * trustProxy?: boolean Enables express trust proxy option, **recommended** if you are using Nginx or some proxy
-* staticFileDirs?: IValuePair<string, string>[] Provide a key-value static directory for serving. Soon this will be changed for better
 * corsOptions?: express-cors.CorsOptions  Provides express-cors module configuration in order to load CORS at express
 * helmetOptions?: boolean | helmet.IHelmetConfiguration  Enable/Disable helmet or provide configuration options which enables. By default we enforce helmet

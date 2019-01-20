@@ -2,12 +2,13 @@ import {Handler } from 'express'
 import {ServerOptions} from 'https'
 import {SessionOptions} from 'express-session'
 import { PoolConfig } from 'mysql';
-import { IValuePair } from '../../common/collections/valuepair';
 import { ConnectionOptions } from 'typeorm';
 import { CorsOptions } from 'cors';
 import * as helmet from 'helmet';
 import { IExpressMiddleware } from '../../common/decorators/http-middleware';
-import { IoMiddleware } from '../neo-app';
+import { IoMiddleware} from '../interfaces/io'
+import { SqlAdapter } from '../../database/adapters/sql-adapter'
+import { IServiceData } from './neo';
 
 /**
  * Application configuration is the boot configuration seed
@@ -24,17 +25,39 @@ export interface NeoAppConfig {
      */
     name?: string,
     /**
-     * Allow HTTPS server creation?
-     * If you set this to true, please send sslOptions
-     * @deprecated By sending sslOptions this will not be necessary
+     * Server port to be running http(s)/socket server
+     * @required
      */
-    https?: boolean,
+    port: number,
     /**
-     * If you want mysql just give a pool config
-     * and it will try to open a pool
-     * @deprecated Will be removed
+     * If you want HTTP's provide the
+     * SSL Options to be loaded in order to create a
+     * HTTPS Server
+     * @default none
      */
-    mysqlConfig?: PoolConfig,
+    sslOptions?: ServerOptions,
+    /**
+     * Application services
+     * @see Documentation
+     */
+    services?: IServiceData[],
+    /**
+     * Provide any of Neots database module adapter instance
+     * in order to injection to your models via DI
+     * ** Note ** This will be verified and passed first rather than
+     * unsafe database so if you wan't unsafe just dont set this property
+     * @default none
+     */
+    database?: SqlAdapter,
+    /**
+     * Provide any database instance you have created to be passed
+     * to your models.
+     * 
+     * Warning: By passing unsafe database we cannot
+     * guarantee the connection is alive and notify in case it don't
+     * @default none
+     */
+    unsafeDatabase?: any
     /**
      * Express session configuration
      * In order to enable session's please 
@@ -44,12 +67,6 @@ export interface NeoAppConfig {
      * @default
      */
     sessionOptions?: SessionOptions,
-    /**
-     * SSL Options to be loaded while creating a
-     * HTTPS Server instance
-     * @default none
-     */
-    sslOptions?: ServerOptions,
     /**
      * SocketIO server configuration
      * In order to enable socket.io server you need
@@ -63,11 +80,6 @@ export interface NeoAppConfig {
      * @default localhost
      */
     hostname?: string,
-    /**
-     * Server port to be running http(s)/socket server
-     * @required
-     */
-    port: number,
     /**
      * Express response view engine
      * @default ejs
@@ -87,30 +99,11 @@ export interface NeoAppConfig {
      */
     ioMiddlewares?: IoMiddleware[],
     /**
-     * @deprecated Will be removed
-     */
-    databaseORM?: any
-    /**
-     * Define whether you want to use a database ORM
-     * which in case is TypeORM
-     * @see https://github.com/typeorm/typeorm
-     * @default false
-     * @deprecated Will be removed
-     */
-    databaseOrm?: ConnectionOptions,
-    /**
      * If you are using some proxy reverse such as Nginx
      * please set this to true
      * @default false
      */
     trustProxy?: boolean,
-    /**
-     * Provide the list of serving directories in case
-     * you want to serve web resources
-     * @default []
-     * @todo Will be changed 
-     */
-    staticFilesDirs?: IValuePair<string,string>[],
     /**
      * Enable CORS module with the provided options
      */

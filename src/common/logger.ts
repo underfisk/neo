@@ -17,6 +17,10 @@ export class Logger
      * @param str 
      */
     public static log(str: any) : void {
+        if (str === 'object') {
+            this.logInstance(JSON.stringify(str))
+            return
+        }
         this.logInstance(`[${Logger.todayDate()}] ${chalk.default.yellow("NEO")} ${str}`)
     }
 

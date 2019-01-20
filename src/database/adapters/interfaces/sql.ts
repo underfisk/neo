@@ -6,3 +6,9 @@ export interface IMysqlObjectLiteral {
     value: any
 }
 
+/**
+ * Provies a way of receiving a function
+ */
+export interface IConnectionFunction<T,R> {
+    (err: T, conn: R) : any
+}
