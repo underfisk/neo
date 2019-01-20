@@ -87,6 +87,9 @@ export class PackageFactory
         if (typeof pkg.listeners != 'undefined' && pkg.listeners.length > 0)
             this.loadListeners(pkg.listeners, modelsRepository)
 
+        log(`${this.repo.getControllersCount()} controllers loaded.`)
+        log(`${this.repo.getListenersCount()} listeneres loaded.`)
+        log(`${this.repo.getModelsCount()} models loaded.`)
     }
 
     /**

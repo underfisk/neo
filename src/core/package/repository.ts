@@ -126,5 +126,15 @@ export class Repository
         return this.models
     }
 
+    public getModelsCount() : number {
+        return this.models.length
+    }
 
+    public getListenersCount() : number {
+        return this.listeners.length
+    }
+
+    public getControllersCount() : number {
+        return this.controllers.length
+    }
 }
