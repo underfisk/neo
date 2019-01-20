@@ -2,6 +2,7 @@ import * as Express from 'express'
 import * as http from 'http'
 import * as https from 'https'
 import * as debug from 'debug'
+import * as io from 'socket.io'
 import * as session from 'express-session'
 import { PackageFactory } from './package/factory';
 import { SessionOptions } from 'express-session';
@@ -113,6 +114,9 @@ export class NeoApplication {
             )
         else
             this.server = http.createServer(this.expressApp)
+        
+        //Create socket io server
+        this.eventIO = io(this.server, this.config.socketOptions)
         
         //Make sure we have session middleware in case session is on
         if (!isUndefined(this.sessionMiddleware)){
