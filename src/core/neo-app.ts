@@ -4,16 +4,16 @@ import * as https from 'https'
 import * as debug from 'debug'
 import * as io from 'socket.io'
 import * as session from 'express-session'
-import { PackageFactory } from './package/factory';
+import { RepositoryFactory } from './factory';
 import { SessionOptions } from 'express-session';
 import * as compression from 'compression'
 import * as cors from 'cors'
 import * as helmet from 'helmet'
 import { isUndefined } from 'util';
 import { NeoAppConfig } from './interfaces/app-config';
-import { IPackage } from './interfaces/package';
 import { IoMiddleware } from './interfaces/io';
-import { IServiceData } from './interfaces';
+import { IServiceData, INeoModel } from './interfaces';
+import { Repository } from './repository';
 
 
 /**
@@ -57,6 +57,11 @@ export class NeoApplication {
     private _services: IServiceData[] = []
 
     /**
+     * Every loaded resource is holded here
+     */
+    private _repository: Repository
+
+    /**
      * Session middleware for socket.io and express share same session object
      */
     private sessionMiddleware: any
@@ -71,11 +76,14 @@ export class NeoApplication {
      * 
      * @param config 
      */
-    public constructor (default_package: IPackage, private readonly config: NeoAppConfig){       
+    public constructor (private readonly config: NeoAppConfig){       
         this.log("Booting Neo-Application...")
         NeoApplication._singleton = this
         this.expressApp = Express()
     
+        //Initialize our repostiory
+        this._repository = new Repository()
+
         //Initialize session before all to share
         this.useSession(this.config.sessionOptions)
 
@@ -130,9 +138,9 @@ export class NeoApplication {
             this.addIOMiddlewareList(this.config.ioMiddlewares)
         }
 
-        //Process our package
-        this.loadDefaultPackage(default_package)
-
+        
+        //Load our repository
+        RepositoryFactory.load(this.config, this._repository, this.expressRouter, this.eventIO)
 
         //Setup express router
         this.expressApp.use(this.expressRouter)
@@ -173,17 +181,21 @@ export class NeoApplication {
     }
 
     /**
-     * Loads the default package
-     * @param default_package 
+     * Returns a model if found
+     * @param name 
      */
-    private loadDefaultPackage (default_package: IPackage) : void {
-       //Make sure we have db or unsafe db
-        let db = isUndefined(this.config.database) ? (!isUndefined(this.config.unsafeDatabase) ? 
-                        this.config.unsafeDatabase : null) : this.config.database
-       
-        let factory = new PackageFactory(this.expressRouter, this.eventIO, db)
-        factory.process(default_package)
-        
+    public getModel<T = any>(name: string) : T {
+        for(const $ of this._repository.getLoadedModels()){
+            if ($.options.alias === name)
+                return $.reference as T
+        }
+    }
+
+    /**
+     * Loads a model if it's not loaded yet
+     */
+    public loadModel<T = any>(data: INeoModel) : T {
+        return this._repository.loadModel(data) as T
     }
 
     /**

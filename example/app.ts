@@ -3,6 +3,7 @@ import * as mysql from 'mysql'
 import { MysqlAdapter } from '../src/database'
 import CatModel from './cat.model';
 import SmtpEmailer from './smtp';
+import CatController from './cat.controller';
 
 //works
 const unafeInstance = mysql.createPool({
@@ -21,16 +22,14 @@ const safeDB = new MysqlAdapter({
 
 async function boostrap() {
     const app = new neots.NeoApplication({
-        name: "core",
-        models: [ CatModel ]
-    }, {
         name: "test",
         port: 3000,
         //unsafeDatabase: unafeInstance
         database: safeDB,
         services: [
             {name: "email", instance: new SmtpEmailer()}
-        ]
+        ],
+        controllers: [ CatController]
     })
 
 

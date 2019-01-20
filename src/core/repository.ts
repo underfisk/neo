@@ -1,10 +1,8 @@
 import * as debug from 'debug'
-import { INeoModel, IServiceData } from '../interfaces/neo';
-import { IPackage } from '../interfaces/package';
-import {Constructable} from '../../common/constructable'
-import { Handler } from 'express'
+import { INeoModel } from './interfaces/neo';
+import {Constructable} from '../common/constructable'
+import { Logger } from '../common';
 
-const log: any = debug('neots:repository')
 
 /**
  * Returns a repository of a loaded package
@@ -13,38 +11,11 @@ const log: any = debug('neots:repository')
  */
 export class Repository
 {
-    private readonly name: string 
-    private readonly controllers?: Constructable<any>[]
-    private models: INeoModel[]
-    private readonly middlewares?: Handler[]
-    private readonly listeners?: Constructable<any>[]
+    private readonly controllers?: Constructable<any>[] = []
+    private models: INeoModel[] = []
+    private readonly listeners?: Constructable<any>[] = []
 
-    /**
-     * Receives a package default or not
-     * @param pkg 
-     */
-    constructor(pkg: IPackage){
-        log('Package repository is being created..')
-        this.name = pkg.name
-        this.controllers = pkg.controllers
-        this.listeners = pkg.listeners
-        this.models = this.transformModels(pkg.models),
-        this.middlewares = pkg.middlewares
-    }
-    
-    /**
-     * Transforms a model to a neo model
-     */
-    private transformModels(models: any[]) : INeoModel[] {
-        let transformedList = []
-        for(const model of models)
-            transformedList.push({
-                reference: model.reference,
-                options: model.options
-            })
 
-        return transformedList
-    }
 
     /**
      * Tries to load the given model
@@ -100,19 +71,11 @@ export class Repository
         }
     }
 
-
-    /**
-     * Returns this package name
-     */
-    public getName() : string {
-        return this.name
-    }
-
     /**
      * Returns the model if is loaded otherwise returns undefined
      * @param name 
      */
-    public getModel<T>(nameOrAlias: string) : any {
+    public getModel<T = any>(nameOrAlias: string) : T {
         for(const loadedModel of this.models)
             if (loadedModel.options.alias === nameOrAlias) 
                 return loadedModel.reference as T
@@ -122,7 +85,7 @@ export class Repository
     /**
      * Returns the list of loaded models 
      */
-    public getLoadedModels() : any[] {
+    public getLoadedModels() : INeoModel[] {
         return this.models
     }
 

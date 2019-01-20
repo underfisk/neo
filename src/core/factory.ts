@@ -1,12 +1,11 @@
 import { Router } from 'express';
 import * as debug from 'debug'
-import {PackageRepository} from './package-repository';
 import { Repository } from './repository';
 import { ModelRepository } from './model-repository';
 import { isUndefined } from 'util';
-import { MetadataScanner } from '../metadata-scanner';
-import { Constructable } from '../../common/constructable';
-import { IControllerData } from '../../common/decorators/http-controller';
+import { MetadataScanner } from './metadata-scanner';
+import { Constructable } from '../common/constructable';
+import { IControllerData } from '../common/decorators/http-controller';
 import { 
     HTTP_MIDDLEWARE, 
     HTTP_ROUTE, 
@@ -14,13 +13,11 @@ import {
     IO_HANDLER, 
     IO_LISTENER, 
     IO_EVENT_MIDDLEWARE, 
-    NAMESPACE_IOMIDDLEWARE, 
-    NEO_SERVICE
-} from '../../constants';
-import { IRouteMetadata } from '../interfaces/routes-metadata';
-import { NEO_MVC_MODEL } from '../../constants';
-import { IPackage } from '../interfaces/package';
-import { IServiceData } from '../interfaces';
+    NAMESPACE_IOMIDDLEWARE
+} from '../constants';
+import { IRouteMetadata } from './interfaces/routes-metadata';
+import { NEO_MVC_MODEL } from '../constants';
+import { NeoAppConfig } from './interfaces';
 
 /**
  * Private instance of packate factory debug
@@ -29,24 +26,15 @@ const log = debug('neots:package-factory')
 
 
 /**
- * Package Factory is designed to process, analyze and load packages and it's content
+ * Repository Factory is designed to process, analyze and load 
+ * our application resources such as Controllers, Listeners
+ * and Models
  * 
  * @author Enigma
  * @package Neo
  */
-export class PackageFactory
-{
-    private repo: Repository
-
-    /**
-     * Dictionary of loadedPackages is manditory here
-     * 
-     * @param loadedPackages 
-     */
-    constructor(private readonly router: Router, 
-            private readonly io: SocketIO.Server,
-            private readonly db?: any){}
-    
+export class RepositoryFactory
+{   
     /**
      * Processes a given package
      * 
@@ -55,49 +43,40 @@ export class PackageFactory
      * @return returns whether he was 
      * loaded succesfully or throw error
      */
-    public process(pkg: IPackage) : any {
-        log(`Processing package: ${pkg.name}`)
+    public static load(config: NeoAppConfig, repoRef: Repository, router: Router, io: SocketIO.Server) : any {
+        //First of all load our models/providers
+        if (config.models !== undefined && config.models.length > 0){
+            let db = isUndefined(config.database) ? (!isUndefined(config.unsafeDatabase) ? 
+                    config.unsafeDatabase : null) : config.database
+            this.loadModels(config.models, db, repoRef)
+        }
 
-        //Name is unique so 
-        if ( this.isAlreadyLoaded(pkg.name) )
-            throw new Error(`${pkg.name} is already loaded.`)
-        else
-            this.repo = PackageRepository.createPackage(pkg.name)
+        //Create a space for our models
+        const modelRepository = new ModelRepository(repoRef.getLoadedModels())
 
-        //Analyze if the resources inside the package are not loaded
-        this.analyze(pkg)
+        //Load our express controllers
+        if (config.controllers !== undefined && config.controllers.length > 0){
+            this.loadControllers(router, config.controllers, modelRepository, repoRef)
+        }
+
+        //Load our event listeners
+        if (config.listeners !== undefined && config.listeners.length > 0){
+            this.loadListeners(config.listeners, modelRepository, repoRef, io)
+        }
+
+        //Output the loading result
+        log(`${repoRef.getControllersCount()} controllers loaded.`)
+        log(`${repoRef.getListenersCount()} listeneres loaded.`)
+        log(`${repoRef.getModelsCount()} models loaded.`)
+
     }
-    
-    /**
-     * Analyzes a package and verify circular dependecy problems
-     * 
-     * @param pkg 
-     */
-    private analyze(pkg: IPackage) : void {
 
-        if (typeof pkg.models != 'undefined' && pkg.models.length > 0)
-            this.loadModels(pkg.models)
-            
-        //Now create a new repository of models
-        const modelsRepository = new ModelRepository(this.repo.getLoadedModels())
-
-        if (typeof pkg.controllers != 'undefined' && pkg.controllers.length > 0)
-            this.loadControllers(pkg.controllers, modelsRepository)
-
-        if (typeof pkg.listeners != 'undefined' && pkg.listeners.length > 0)
-            this.loadListeners(pkg.listeners, modelsRepository)
-
-        log(`${this.repo.getControllersCount()} controllers loaded.`)
-        log(`${this.repo.getListenersCount()} listeneres loaded.`)
-        log(`${this.repo.getModelsCount()} models loaded.`)
-    }
 
     /**
      * Loads the controllers of a given package
      * @param pkg 
      */
-    private loadControllers(controllers: Constructable<any>[], models: ModelRepository) : void
-    {
+    private static loadControllers(router: Router, controllers: Constructable<any>[], models: ModelRepository, repo: Repository) : void {
         controllers.map( (ctr : Constructable<any>) => {
             //Read the metadata of this controller
             const reflectionMethods = MetadataScanner.scan<any, string>(ctr.prototype, HTTP_ROUTE),
@@ -117,7 +96,7 @@ export class PackageFactory
 
 
             //load it
-            this.repo.loadController(ctrInstance)
+            repo.loadController(ctrInstance)
 
             //Get the controller prefix
             const controllerPrefix = reflectionClassData.prefix
@@ -138,7 +117,7 @@ export class PackageFactory
                     //Proceed the format of the route
                     reflector.descriptor.path = this.routeFormatter(controllerPrefix, reflector.descriptor.path)
                         
-                    this.loadRoutes(routeData, middlewares, ctrInstance, reflector.method.name)
+                    this.loadRoutes(router, routeData, middlewares, ctrInstance, reflector.method.name)
                 })
             }
         })
@@ -151,16 +130,16 @@ export class PackageFactory
      * @param {Package} pkg
      * @memberof PackageFactory
      */
-    private loadModels(models: any[]) : void
+    private static loadModels(models: any[], db: any, repo: Repository) : void
     {
         models.map ( (model : Constructable<any>) => {
             const metadata = Reflect.getMetadata(NEO_MVC_MODEL, model)
             //Do we have metadata
             if (metadata !== undefined)
             {
-                let ref = this.db == null ? new model() : new model(this.db)
+                let ref = db == null ? new model() : new model(db)
                 //Load it to our repository
-                this.repo.loadModel({
+                repo.loadModel({
                     reference: ref,
                     options: metadata
                 })
@@ -174,15 +153,16 @@ export class PackageFactory
      * Loads all the routes for express
      * @param pkg 
      */
-    private loadRoutes(route: IRouteMetadata, middlewares: Function, controller: any, functionName: string) : void {
+    private static loadRoutes(appRouter: Router, route: IRouteMetadata, middlewares: Function, 
+        controller: any, functionName: string) : void {
         if (middlewares !== undefined) {
             route.methods.map( method => {
-                this.router[method](route.path, middlewares, (req,res) => controller[functionName](req,res))
+                appRouter[method](route.path, middlewares, (req,res) => controller[functionName](req,res))
             })
         }
         else {
             route.methods.map( method => {
-               this.router[method](route.path, (req,res) => controller[functionName](req,res))
+                appRouter[method](route.path, (req,res) => controller[functionName](req,res))
             })
         }
     }
@@ -195,7 +175,8 @@ export class PackageFactory
      * @returns {Listener[]}
      * @memberof PackageFactory
      */
-    private loadListeners(listeners: Constructable<any>[], models: ModelRepository) : void {
+    private static loadListeners(listeners: Constructable<any>[], models: ModelRepository, repo: Repository, 
+        io: SocketIO.Server) : void {
         listeners.map( (eventListener: Constructable<any>) => {
             //Read the metadata of this event listeners first
             const reflectionMethodsData = MetadataScanner.scan<any, string>(eventListener.prototype, IO_HANDLER),
@@ -211,21 +192,21 @@ export class PackageFactory
 
             //Now create their instances
             if (models.count() > 0)
-                created_listener = new eventListener(this.io, models)
+                created_listener = new eventListener(io, models)
             else
-                created_listener = new eventListener(this.io)    
+                created_listener = new eventListener(io)    
 
             //load it
-            this.repo.loadListener(created_listener)
+            repo.loadListener(created_listener)
 
             //Before subscribe register namespace middlewares
             if (!isUndefined(nsMiddleware))
             {
                 //Set middleware for the provided namespace
                 if (nsMiddleware.namespace === '/')
-                    this.io.use(nsMiddleware.handler)
+                    io.use(nsMiddleware.handler)
                 else
-                    this.io.of(nsMiddleware.namespace).use(nsMiddleware.handler)
+                    io.of(nsMiddleware.namespace).use(nsMiddleware.handler)
             }
 
             //Do we have any subsribed event?
@@ -234,7 +215,7 @@ export class PackageFactory
                 if ( reflectionClassData == "")
                 {
                     //Bind to the connection establish event
-                    this.io.on('connection', socket => {
+                    io.on('connection', socket => {
                         //Loop it and bind them
                         reflectionMethodsData.map( reflector => {
                             const fnMiddleware = Reflect.getMetadata(IO_EVENT_MIDDLEWARE, created_listener[reflector.method.name])
@@ -257,7 +238,7 @@ export class PackageFactory
                 else
                 {
                     //It is on a namespace
-                    this.io.of(reflectionClassData).on('connection', socket => {
+                    io.of(reflectionClassData).on('connection', socket => {
                         reflectionMethodsData.map( reflector => {
                             socket.on(reflector.descriptor, req => {
                                 created_listener[reflector.method.name](socket,req)
@@ -276,7 +257,7 @@ export class PackageFactory
      * 
      * @param route 
      */
-    private routeFormatter(prefix: string, path: string ) : string {
+    private static routeFormatter(prefix: string, path: string ) : string {
         let newRoute: string = ""
 
         //Is it not default controller nor default route
@@ -298,14 +279,4 @@ export class PackageFactory
         return newRoute[newRoute.length - 1] === '/' ? newRoute.slice(0, newRoute.length - 1) : newRoute
     }
 
-    /**
-     * Verifies if a package is loaded
-     * 
-     * @param name
-     * 
-     * @return Whether a package is loaded or not 
-     */
-    private isAlreadyLoaded(name: string) : boolean {
-        return PackageRepository.isLoaded(name)
-    }
 }

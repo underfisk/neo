@@ -5,6 +5,6 @@
  * 
  * @package Neo
  */
-export interface IConstructable<T>{
-    new <T>() : void
+export interface IConstructable{
+    new () : void
 }

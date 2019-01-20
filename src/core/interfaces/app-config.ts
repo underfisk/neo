@@ -9,6 +9,7 @@ import { IExpressMiddleware } from '../../common/decorators/http-middleware';
 import { IoMiddleware} from '../interfaces/io'
 import { SqlAdapter } from '../../database/adapters/sql-adapter'
 import { IServiceData } from './neo';
+import { Constructable } from '../../common/constructable';
 
 /**
  * Application configuration is the boot configuration seed
@@ -41,6 +42,22 @@ export interface NeoAppConfig {
      * @see Documentation
      */
     services?: IServiceData[],
+    /**
+     * Models are likely as data providers and the data manipularors
+     * By providing a model, he will be added into the model repository
+     * and passed to controllers and listeners
+     * Also you can access to them via `NeoApplication.singleton`
+     */
+    models?: Constructable<any>[],
+    /**
+     * Controllers are the route handlers when something hit
+     * the desired URL
+     */
+    controllers?: Constructable<any>[],
+    /**
+     * Listeners are our event handlers for socket.io
+     */
+    listeners?: Constructable<any>[],
     /**
      * Provide any of Neots database module adapter instance
      * in order to injection to your models via DI

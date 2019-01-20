@@ -9,10 +9,10 @@ import { Constructable } from '../../common/constructable'
  * 
  * @package Neo
  */
-export interface IPackage {
-    readonly name: string,
-    controllers?: Constructable<any>[],
-    models?: Constructable<any>[],
-    middlewares?: Handler[],
-    listeners?: Constructable<any>[]
-}
+// export interface IPackage {
+//     readonly name: string,
+//     controllers?: Constructable<any>[],
+//     models?: Constructable<any>[],
+//     middlewares?: Handler[],
+//     listeners?: Constructable<any>[]
+// }

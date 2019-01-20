@@ -1,7 +1,7 @@
 import * as neo from '../src'
 import * as mysql from 'mysql'
 import { MysqlAdapter } from '../src/database'
-import { PackageRepository, Logger, NeoApplication } from '../src';
+import { Logger, NeoApplication } from '../src';
 import SmtpEmailer from './smtp';
 
 @neo.Model({
