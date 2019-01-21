@@ -63,11 +63,10 @@ export class Repository
         if (this.listeners.map( e => e.constructor.name).indexOf(listener.constructor.name) !== -1){
             for(const e of this.listeners)
                 if (e.constructor.name === listener.constructor.name)
-                    return e
+                    return
         }
         else {
-            this.listeners.push(listener)  
-            return listener
+            this.listeners.push(listener) 
         }
     }
 

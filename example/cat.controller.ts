@@ -11,6 +11,6 @@ export default class CatController {
     
     @Get()
     public alsdalsd(req, res) : void {
-        res.end('hellloas')
+        res.sendFile(__dirname + '/index.html')
     }
 }

@@ -4,6 +4,7 @@ import { MysqlAdapter } from '../src/database'
 import CatModel from './cat.model';
 import SmtpEmailer from './smtp';
 import CatController from './cat.controller';
+import CatListener from './cat.listener';
 
 //works
 const unafeInstance = mysql.createPool({
@@ -23,16 +24,20 @@ const safeDB = new MysqlAdapter({
 async function boostrap() {
     const app = new neots.NeoApplication({
         name: "test",
-        port: 3000,
+        port: 4000,
         //unsafeDatabase: unafeInstance
         database: safeDB,
         services: [
             {name: "email", instance: new SmtpEmailer()}
         ],
-        controllers: [ CatController]
+        socketOptions: {
+            transports: ['polling'],
+            allowUpgrades: false
+        },
+        controllers: [ CatController],
+        listeners: [ CatListener ]
     })
-
-
+    
     app.start(() => {
         console.log("App has started")
     })

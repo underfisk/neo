@@ -18,11 +18,11 @@ import {
 import { IRouteMetadata } from './interfaces/routes-metadata';
 import { NEO_MVC_MODEL } from '../constants';
 import { NeoAppConfig } from './interfaces';
-
+import * as validator from 'validator'
 /**
  * Private instance of packate factory debug
  */
-const log = debug('neots:package-factory')
+const log = debug('neots:repository-factory')
 
 
 /**
@@ -202,6 +202,7 @@ export class RepositoryFactory
             //Before subscribe register namespace middlewares
             if (!isUndefined(nsMiddleware))
             {
+                log("We have middleware for socket.io")
                 //Set middleware for the provided namespace
                 if (nsMiddleware.namespace === '/')
                     io.use(nsMiddleware.handler)
@@ -212,8 +213,11 @@ export class RepositoryFactory
             //Do we have any subsribed event?
             if (reflectionMethodsData.length > 0)
             {
-                if ( reflectionClassData == "")
+                log(`We have ${reflectionMethodsData.length} methods to subscribe`)
+                if (reflectionClassData === null)
                 {
+                    log("A new listener is being added into io.connection ")
+                    console.log(reflectionMethodsData)
                     //Bind to the connection establish event
                     io.on('connection', socket => {
                         //Loop it and bind them
@@ -237,6 +241,7 @@ export class RepositoryFactory
                 }
                 else
                 {
+                    log("A new event io is being loaded into namespace: " + reflectionClassData)
                     //It is on a namespace
                     io.of(reflectionClassData).on('connection', socket => {
                         reflectionMethodsData.map( reflector => {
