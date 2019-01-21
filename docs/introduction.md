@@ -10,7 +10,6 @@
 * [Models](#models)
 * [Views/Whatever](#views/whatever)
 * [Models injection loading and unloading](#models-injection-loading-and-unloading)
-* [Packages management](#packages-management)
 * [Services](#services)
 * [Database](#database.md)
 * [Low level API](lowlevelapi.md)
@@ -20,6 +19,9 @@
 Neo implements it's own architecture which is led by Packages as .NET, java and other languages.
 In order to keep code organized in high scalable projects, sometimes you need to "bundle" you're code in parts
 to get a more controlable and scalable code.
+We use "singleton" pattern to load some resources such as Listeners, Controllers, Models and Services.
+This framework may be seen as a "boilerplate" since we simply mount everything in front of express/socketio with 
+a few modifications for the "need" in our project.
 
 ### Package
 A package is something groupable where you can have parts of code inside a box. This is nothing more than a simple way of importing/exporting code.
@@ -194,12 +196,6 @@ Controllers and EventListeners are the only group of handlers that work directly
 
 In order to load a new model we simply have to retrieve the package and load it there, the same goes to unload.
 
-## Packages Management
-Neo provides a singleton named `PackageRepository` which contains every loaded package and also provides an interface to retrieve, load and unload packages in runtime.
-Sometimes this is very usefull to use when we want to get some model and we don't have it auto-loaded or is not in the local package.
-
-[PackageRepository API](#packagerepository-api)
-[Package API](#package-api)
 
 ## Services
 Neo uses a different philosophy for Services whereas in Angular/Nest they are a part of providers.
