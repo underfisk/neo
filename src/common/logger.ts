@@ -37,7 +37,8 @@ export class Logger
      * @param str 
      */
     public static error(str: any) : void {
-        console.trace(str)
+        console.log("ERROR: " + str === 'object' ? JSON.stringify(str) : str)
+        //console.trace(str)
 
     }
 

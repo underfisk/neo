@@ -113,7 +113,6 @@ export class NeoApplication {
         //Load our services
         if (this.config.services !== undefined && this.config.services.length > 0)
             this._services = this.config.services
-
         //Start our server
         if (!isUndefined(this.config.sslOptions))
             this.server = https.createServer(
