@@ -152,6 +152,7 @@ export class NeoApplication {
      * @return Application
      */
     public static get singleton() : NeoApplication {
+        if (isUndefined(this._singleton)) throw new Error("NeoApplication singleton is not initialized.")
         return this._singleton
     }
 
