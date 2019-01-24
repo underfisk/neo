@@ -84,8 +84,11 @@ export class NeoApplication {
         //Initialize our repostiory
         this._repository = new Repository()
 
-        //Initialize session before all to share
-        this.useSession(this.config.sessionOptions)
+        //Lets see if we have session
+        if (this.config.sessionOptions !== undefined){
+            //Initialize session before all to share
+            this.useSession(this.config.sessionOptions)
+        }
 
         //Do we have cors?
         if (!isUndefined(this.config.corsOptions))
@@ -312,14 +315,11 @@ export class NeoApplication {
      * @param options SessionOptions
      */
     private useSession(options?: SessionOptions) : this {
-        if (options !== undefined)
-        {
-            //Express-session middleware
-            this.sessionMiddleware = session(options)
-            this.addMiddleware(this.sessionMiddleware)
+        //Express-session middleware
+        this.sessionMiddleware = session(options)
+        this.addMiddleware(this.sessionMiddleware)
 
-            this.log("Session has been created and shared with socket.io")
-        }
+        this.log("Session has been created and shared with socket.io")
         return this
     }
 
