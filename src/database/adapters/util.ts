@@ -1,5 +1,6 @@
 import { IMysqlObjectLiteral } from "./interfaces/sql";
-import { escape as mysqlEscape } from 'mysql'
+import { escape as mysqlEscape } from 'sqlstring'
+
 /**
  * Returns a bind mark separed wih commas
  * @param size 
@@ -17,8 +18,8 @@ export function bindMarks(size: number) : string {
 
 /**
  * Returns a transformed set string for sql update query (values come
- * escaped using mysql.escape function)
- * @description Latest update 29/01
+ * escaped using sqlstring module)
+ * 
  * @param data 
  */
 export function transformSet(data: IMysqlObjectLiteral[]) : any {

@@ -44,6 +44,7 @@
       "pg": "^7.8.0",
       "reflect-metadata": "^0.1.10",
       "socket.io": "^2.2.0",
+      "sqlstring": "^2.3.1",
       "typeorm": "^0.2.11"
    },
    "devDependencies": {
@@ -65,6 +66,7 @@
       "@types/node": "^8.10.39",
       "@types/nodemailer": "^4.6.5",
       "@types/socket.io": "^2.1.2",
+      "@types/sqlstring": "^2.2.1",
       "@types/stack-trace": "0.0.29",
       "@types/validator": "^10.9.0",
       "babel-loader": "^8.0.5",
