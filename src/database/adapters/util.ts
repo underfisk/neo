@@ -1,5 +1,5 @@
 import { IMysqlObjectLiteral } from "./interfaces/sql";
-
+import { escape as mysqlEscape } from 'mysql'
 /**
  * Returns a bind mark separed wih commas
  * @param size 
@@ -24,7 +24,7 @@ export function transformSet(data: IMysqlObjectLiteral[]) : any {
     let transformed = ''
 
     data.map( (obj: IMysqlObjectLiteral, index) => {
-        transformed += (`${obj.column} = ${escape(obj.value)}`)
+        transformed += (`${obj.column} = ${mysqlEscape(obj.value)}`)
         if (index !== data.length - 1 )
             transformed += (',')
     })
