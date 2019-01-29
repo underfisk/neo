@@ -15,11 +15,12 @@ export function bindMarks(size: number) : string {
     return str
 } 
 
-    /**
-     * Returns a transformed set string for sql update query (values come
-     * escaped using mysql.escape function)
-     * @param data 
-     */
+/**
+ * Returns a transformed set string for sql update query (values come
+ * escaped using mysql.escape function)
+ * @description Latest update 29/01
+ * @param data 
+ */
 export function transformSet(data: IMysqlObjectLiteral[]) : any {
     let transformed = ''
 
