@@ -7,5 +7,5 @@
  * 
  */
 export * from './common'
-export * from './core/index'
+export * from './core'
 export * from './database'
