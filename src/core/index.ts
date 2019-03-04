@@ -1,4 +1,4 @@
-export * from './neo-app'
+export { NeoApplication }from './neo-app'
 export * from './interfaces'
 export * from './exceptions'
 export { ModelRepository } from './model-repository'
