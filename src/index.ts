@@ -6,5 +6,8 @@
  * 
  */
 export * from './common'
-export * from './core'
+export {
+    NeoApplication
+} from './core/neo-app'
+
 export * from './database'
