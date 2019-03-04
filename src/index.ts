@@ -2,7 +2,7 @@
  * @package Neo.ts
  * @author Enigma
  * @namespace Neo
- * @updated March 3
+ * @updated March 3, 2.0
  * @link https://github.com/underfisk/neo
  * 
  */
