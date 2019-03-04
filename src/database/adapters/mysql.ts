@@ -21,13 +21,26 @@ export class MysqlAdapter implements SqlAdapter{
     private log: debug.IDebugger = debug('neodb::mysql')
 
     constructor(
-        private readonly options: string | mysql.PoolConfig) {
+        private readonly options: string | mysql.PoolConfig, manualStart: boolean = false) {
         this.log("Pool has been created")
-        this.pool = mysql.createPool(this.options)
-        this.pool.on('error', this.onError)
-        this.pool.on('close', this.onClose)
+        if (!manualStart){
+            this.pool = mysql.createPool(this.options)
+            this.pool.on('error', this.onError)
+            this.pool.on('close', this.onClose)
+        }
     }
 
+
+    /**
+     * Manually starts the pool if it's not yet
+     */
+    public connect(){
+        if (this.pool === undefined){
+            this.pool = mysql.createPool(this.options)
+            this.pool.on('error', this.onError)
+            this.pool.on('close', this.onClose)
+        }
+    }
 
     /**
      * Closes and disposes our pool
@@ -37,6 +50,14 @@ export class MysqlAdapter implements SqlAdapter{
         this.pool = null //dispose for gc
     }
 
+    /**
+     * Set a configuration option
+     * @param name 
+     * @param value 
+     */
+    public setConfig(name: string, value: any ) {
+        this.pool.config[name] = value
+    }
 
     /**
      * Notified when an error occurs

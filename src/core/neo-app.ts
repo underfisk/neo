@@ -289,12 +289,19 @@ export class NeoApplication {
      * Returns low level instance of Express Application
      * Use this carefully since TOPFramework is written in top
      * of this instance
-     * 
+     * @deprecated This will be renamed soon
      */
     public get httpServer () : Express.Application {
         return this.expressApp
     }
 
+    /**
+     * Exposes the underlayer http server
+     */
+    public get underlayerHttpServer() : http.Server | https.Server {
+        return this.server
+    }
+    
     /**
      * Returns express router instance
      */
