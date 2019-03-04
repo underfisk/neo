@@ -7,10 +7,5 @@
  * 
  */
 export * from './common'
-export {
-  NeoApplication,
-  ModelRepository,
-  Repository,
-  RepositoryFactory  
-} from './core'
+export * from './core/index'
 export * from './database'
